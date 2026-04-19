@@ -194,8 +194,8 @@ function setupEventListeners() {
     handleInputChange();
   });
 
-  // Window controls
-  el.btnClose.onclick = () => { el.quitModal.classList.remove('hidden'); };
+  // Window controls — X button just hides Zero (stays running in tray 24/7)
+  el.btnClose.onclick = () => window.zero.hideWindow();
   el.btnQuitYes.onclick = () => { window.zero.quitApp(); };
   el.btnQuitNo.onclick = () => { el.quitModal.classList.add('hidden'); };
   
