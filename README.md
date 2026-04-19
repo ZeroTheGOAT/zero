@@ -4,7 +4,7 @@ Zero is a local AI assistant that runs as a floating overlay on Windows. It conn
 
 ## Demo
 
-https://github.com/ZeroTheGOAT/zero/raw/main/demo.mp4
+https://github.com/user-attachments/assets/e0e43fc0-abda-4567-8083-f565a649b4bc
 
 ---
 
