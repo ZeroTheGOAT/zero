@@ -1224,29 +1224,62 @@ IMPORTANT RULES:
 }
 
 function extractMemoryFacts(text) {
-  // We only extract facts when the user explicitly commands the AI to remember something
-  // Generic "I am..." regexes cause too many false positives in casual conversation.
   const lower = text.toLowerCase();
   
-  const patterns = [
-    /remember\s+(?:that\s+)?(.{5,100})/i,
-    /note\s+that\s+(.{5,100})/i,
-    /keep\s+in\s+mind\s+(?:that\s+)?(.{5,100})/i,
-    /store\s+this\s+(?:in memory)?(?:[:,\s]+)?(.{5,100})/i
+  // Explicit commands where the fact follows the command
+  const prefixPatterns = [
+    /remember\s+(?:that\s+)?(.{4,100})/i,
+    /note\s+that\s+(.{4,100})/i,
+    /keep\s+in\s+mind\s+(?:that\s+)?(.{4,100})/i,
+    /store\s+this\s+(?:in memory)?(?:[:,\s]+)?(.{4,100})/i
   ];
 
-  for (const pat of patterns) {
-    const match = lower.match(pat);
+  // Specific declarations where the whole phrase is the fact
+  const wholePhrasePatterns = [
+    /(my\s+name\s+is\s+.*)/i,
+    /(my\s+(?:favorite|favourite|phone number|address|email).*\s+is\s+.*)/i,
+    /(call\s+me\s+.*)/i
+  ];
+
+  // Suffix commands where the fact precedes the command e.g., "my name is harry and remember that"
+  const suffixPatterns = [
+    /(.{4,100}?)\s*(?:,|and|so|please)?\s*remember\s+(?:that|this|it)/i
+  ];
+
+  let factToSave = null;
+
+  for (const pat of suffixPatterns) {
+    const match = text.match(pat);
     if (match && match[1]) {
-      const fact = match[1].replace(/[.!?]+$/, '').trim();
-      if (fact.length > 3 && fact.length < 100) {
-        // Use original case from the text
-        const origMatch = text.match(pat);
-        const origFact = origMatch ? origMatch[1].replace(/[.!?]+$/, '').trim() : fact;
-        window.zero.addMemoryFact(origFact);
-      }
-      break;  // one fact per message to avoid noise
+      factToSave = match[1].replace(/[.!?]+$/, '').trim();
+      break;
     }
+  }
+
+  if (!factToSave) {
+    for (const pat of prefixPatterns) {
+      const match = text.match(pat);
+      if (match && match[1]) {
+        factToSave = match[1].replace(/[.!?]+$/, '').trim();
+        break;
+      }
+    }
+  }
+
+  if (!factToSave) {
+    for (const pat of wholePhrasePatterns) {
+      const match = text.match(pat);
+      if (match && match[1]) {
+        factToSave = match[1].replace(/[.!?]+$/, '').trim();
+        break;
+      }
+    }
+  }
+
+  if (factToSave && factToSave.length > 3 && factToSave.length < 100) {
+    // Basic cleanup
+    if (factToSave.toLowerCase().startsWith('to ')) factToSave = factToSave.substring(3).trim();
+    window.zero.addMemoryFact(factToSave);
   }
 }
 
