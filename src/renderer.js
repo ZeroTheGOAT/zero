@@ -1185,13 +1185,15 @@ function showToast(message) {
 // ═══════════════════════════════════════════════════════════════
 async function buildMemoryContext() {
   const mem = await window.zero.getMemory();
+  const sysPaths = await window.zero.getSystemPaths();
   const parts = [];
 
   parts.push(`You are Zero, a powerful AI agent running locally on the user's Windows computer via Ollama.
 The environment paths you see below are dynamically generated for the active user. You use these to ensure you always target the correct local directories.
-- Current User Home Directory: ${window.zero.getHomeDir()}
-- User Desktop: ${window.zero.getHomeDir()}\\Desktop
-- User Downloads: ${window.zero.getHomeDir()}\\Downloads
+- Current User Home Directory: ${sysPaths.home}
+- User Desktop: ${sysPaths.desktop}
+- User Downloads: ${sysPaths.downloads}
+- User Documents: ${sysPaths.documents}
 
 You are NOT a generic chatbot. You are an AGENT with real system access. You can:
 - Read, write, and delete files on the user's computer

@@ -1197,6 +1197,15 @@ ipcMain.handle('shell:showItem', (_, filePath) => {
   shell.showItemInFolder(path.resolve(filePath));
 });
 
+ipcMain.handle('sys:paths', () => {
+  return {
+    home: app.getPath('home'),
+    desktop: app.getPath('desktop'),
+    downloads: app.getPath('downloads'),
+    documents: app.getPath('documents')
+  };
+});
+
 // ═══════════════════════════════════════════════════════════════
 //  13. APP LIFECYCLE
 // ═══════════════════════════════════════════════════════════════
