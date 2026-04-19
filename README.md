@@ -2,6 +2,10 @@
 
 Zero is a local AI assistant that runs as a floating overlay on Windows. It connects to Ollama running on your machine, keeping everything private and offline. No cloud services, no API keys, no subscriptions.
 
+## Demo
+
+<video src="https://github.com/ZeroTheGOAT/zero/raw/main/demo.mp4" controls width="100%"></video>
+
 ---
 
 ## Requirements
