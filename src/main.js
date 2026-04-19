@@ -1182,6 +1182,10 @@ ipcMain.handle('app:quit', async () => {
   app.quit();
 });
 
+ipcMain.handle('shell:showItem', (_, filePath) => {
+  shell.showItemInFolder(path.resolve(filePath));
+});
+
 // ═══════════════════════════════════════════════════════════════
 //  13. APP LIFECYCLE
 // ═══════════════════════════════════════════════════════════════

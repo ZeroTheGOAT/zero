@@ -104,6 +104,7 @@ contextBridge.exposeInMainWorld('zero', {
   showWindow: () => ipcRenderer.invoke('window:show'),
   minimizeWindow: () => ipcRenderer.invoke('window:minimize'),
   quitApp: () => ipcRenderer.invoke('app:quit'),
+  showFileInFolder: (filePath) => ipcRenderer.invoke('shell:showItem', filePath),
 
   // ── Visibility Events ─────────────────────────────────────
   onShow: (cb) => {

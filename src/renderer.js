@@ -206,6 +206,24 @@ function setupEventListeners() {
   let activeTab = null;
   const createdFiles = []; // Track files created by AI
 
+  function renderFilesList() {
+    if (createdFiles.length === 0) {
+      el.actionPanelContent.innerHTML = '<div class="action-panel-empty">No files created yet</div>';
+    } else {
+      el.actionPanelContent.innerHTML = '';
+      createdFiles.forEach(f => {
+        const item = document.createElement('div');
+        item.className = 'action-panel-item';
+        item.style.cursor = 'pointer';
+        const name = f.split(/[/\\]/).pop();
+        item.textContent = name;
+        item.title = f;
+        item.onclick = () => window.zero.showFileInFolder(f);
+        el.actionPanelContent.appendChild(item);
+      });
+    }
+  }
+
   function toggleTab(tabName, tabEl) {
     if (activeTab === tabName) {
       el.actionPanel.classList.add('hidden');
@@ -222,13 +240,7 @@ function setupEventListeners() {
     tabEl.classList.add('active');
 
     if (tabName === 'files') {
-      if (createdFiles.length === 0) {
-        el.actionPanelContent.innerHTML = '<div class="action-panel-empty">No files created yet</div>';
-      } else {
-        el.actionPanelContent.innerHTML = createdFiles.map(f => 
-          `<div class="action-panel-item">📄 ${escapeHtml(f)}</div>`
-        ).join('');
-      }
+      renderFilesList();
       el.actionPanel.classList.remove('hidden');
     } else if (tabName === 'terminal') {
       el.runningPanel.classList.remove('hidden');
@@ -245,7 +257,12 @@ function setupEventListeners() {
 
   // Track files created by AI from tool outputs
   window._trackCreatedFile = (path) => {
-    if (!createdFiles.includes(path)) createdFiles.push(path);
+    if (!createdFiles.includes(path)) {
+      createdFiles.push(path);
+      if (activeTab === 'files') {
+        renderFilesList();
+      }
+    }
   };
 
   // Sidebar
