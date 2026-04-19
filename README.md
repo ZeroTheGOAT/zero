@@ -9,7 +9,7 @@ Zero is a local AI assistant that runs as a floating overlay on Windows. It conn
 - **Windows 10/11**
 - **Node.js** (v18 or higher) — https://nodejs.org
 - **Ollama** — https://ollama.com/download
-- At least one Ollama model pulled (e.g. `ollama pull gemma3:4b`)
+- At least one Ollama model pulled (e.g. `ollama pull gemma3:e2b`)
 
 ---
 
