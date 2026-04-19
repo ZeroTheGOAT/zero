@@ -33,6 +33,7 @@ let MEMORY_FILE;
 let mainWindow = null;
 let tray = null;
 let isVisible = false;
+let lastHiddenClipboard = '';
 let currentRequest = null;
 let keyListener = null;
 
@@ -182,6 +183,7 @@ function hideOverlay() {
   if (!mainWindow) return;
   mainWindow.hide();
   isVisible = false;
+  lastHiddenClipboard = clipboard.readText(); // Track state
   mainWindow.webContents.send('window:hidden');
   // Throttle renderer when hidden to save RAM
   if (mainWindow.webContents) {
@@ -319,7 +321,16 @@ public class KbHook {
 function captureContextAndShow() {
   if (isVisible) { hideOverlay(); return; }
 
-  const originalText = clipboard.readText();
+  const currentClipboard = clipboard.readText();
+  
+  // If the user manually copied text while Zero was hidden, auto-inject it!
+  if (currentClipboard && currentClipboard !== lastHiddenClipboard) {
+    showOverlay(currentClipboard.trim());
+    return;
+  }
+
+  // Otherwise, user didn't explicitly copy anything. Try to grab currently highlighted text.
+  const originalText = currentClipboard;
   const originalImage = clipboard.readImage();
 
   // Simulate Ctrl+C in the currently focused (non-Zero) window
@@ -329,7 +340,7 @@ function captureContextAndShow() {
     () => {
       setTimeout(() => {
         const newText = clipboard.readText();
-        const selectedText = (newText && newText !== originalText) ? newText : '';
+        const selectedText = (newText && newText !== originalText) ? newText.trim() : '';
 
         // Restore original clipboard
         if (originalText) clipboard.writeText(originalText);
@@ -1190,6 +1201,7 @@ ipcMain.handle('shell:showItem', (_, filePath) => {
 //  13. APP LIFECYCLE
 // ═══════════════════════════════════════════════════════════════
 app.whenReady().then(() => {
+  lastHiddenClipboard = clipboard.readText();
   // Ensure data directory
   DATA_DIR = path.join(app.getPath('userData'), 'zero-data');
   DB_FILE = path.join(DATA_DIR, 'conversations.json');
