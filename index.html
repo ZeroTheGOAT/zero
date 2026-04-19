@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zero</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <!-- ═══ TITLEBAR ═══ -->
+    <header id="titlebar">
+      <button id="btn-sidebar" class="titlebar-btn" title="History">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <div id="titlebar-drag">
+        <span class="title-text">Zero</span>
+        <span id="status-dot" class="status-dot disconnected" title="Checking Ollama..."></span>
+      </div>
+      <div class="titlebar-controls">
+        <button id="btn-new" class="titlebar-btn" title="New chat">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <button id="btn-memory" class="titlebar-btn" title="Memory">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="6" r="3.5" stroke="currentColor" stroke-width="1.3"/><path d="M4 12c0-2.2 1.8-4 4-4s4 1.8 4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="8" cy="5.5" r="1" fill="currentColor"/></svg>
+        </button>
+        <button id="btn-minimize" class="titlebar-btn" title="Minimize">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <button id="btn-close" class="titlebar-btn btn-close" title="Close">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ═══ SIDEBAR ═══ -->
+    <aside id="sidebar" class="sidebar hidden">
+      <div class="sidebar-header">
+        <h3>History</h3>
+        <button id="btn-sidebar-close" class="titlebar-btn">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div id="conversation-list" class="conversation-list"></div>
+      <div class="sidebar-footer">
+      </div>
+    </aside>
+
+    <!-- ═══ CHAT AREA ═══ -->
+    <main id="chat-area">
+      <!-- Welcome screen -->
+      <div id="welcome" class="welcome">
+        <div class="welcome-icon">Z</div>
+        <h2>Zero</h2>
+        <p class="welcome-sub">Your local AI assistant</p>
+        <div class="welcome-hints">
+          <div class="hint"><kbd>Ctrl</kbd><kbd>Ctrl</kbd> Summon from anywhere</div>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div id="messages" class="messages"></div>
+    </main>
+
+    <!-- ═══ QUOTE BLOCK ═══ -->
+    <div id="quote-block" class="quote-block hidden">
+      <div class="quote-content">
+        <span class="quote-label">SELECTED TEXT</span>
+        <p id="quote-text"></p>
+      </div>
+      <button id="quote-dismiss" class="quote-dismiss">&times;</button>
+    </div>
+
+    <!-- ═══ SCREENSHOT PREVIEW ═══ -->
+    <div id="screenshot-preview" class="screenshot-preview hidden">
+      <img id="screenshot-img" alt="Screenshot">
+      <button id="screenshot-dismiss" class="screenshot-dismiss">&times;</button>
+    </div>
+
+    <!-- ═══ SLASH COMMAND PALETTE ═══ -->
+    <div id="command-palette" class="command-palette hidden">
+      <div id="command-list" class="command-list"></div>
+    </div>
+
+    <!-- ═══ INPUT AREA ═══ -->
+    <footer id="input-area">
+      <!-- Action Tabs Row -->
+      <div class="action-tabs">
+        <button id="tab-files" class="action-tab" title="Files created by AI">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 2h5l4 4v8a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.2"/><path d="M9 2v4h4" stroke="currentColor" stroke-width="1.2"/></svg>
+        </button>
+        <button id="tab-terminal" class="action-tab" title="Background processes">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="2.5" width="13" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M4 7l2.5 2L4 11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 11h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          <span id="running-badge" class="tab-badge hidden">0</span>
+        </button>
+      </div>
+
+      <!-- Collapsible Panel (files) -->
+      <div id="action-panel" class="action-panel hidden">
+        <div id="action-panel-content"></div>
+      </div>
+
+      <!-- Running Steps (collapsible from terminal tab) -->
+      <div id="running-panel" class="running-panel hidden">
+        <div class="running-panel-header">
+          <span>Running steps</span>
+          <button id="running-panel-close" class="running-panel-toggle">▲</button>
+        </div>
+        <div id="running-list" class="running-list"></div>
+      </div>
+
+      <!-- Input Row -->
+      <div class="input-row">
+        <button id="btn-attach" class="action-btn" title="Add media">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <button id="btn-screenshot" class="action-btn" title="Capture screen">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="10" rx="1.5" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.3"/></svg>
+        </button>
+        <textarea id="input" placeholder="Ask anything, / for commands" rows="1" autofocus></textarea>
+        <button id="btn-send" class="send-btn" title="Send">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 9h12M10 4l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button id="btn-stop" class="stop-btn hidden" title="Stop">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="4" y="4" width="10" height="10" rx="2" fill="currentColor"/></svg>
+        </button>
+      </div>
+
+      <!-- Model Bar -->
+      <div class="model-bar">
+        <select id="model-select" class="model-chip"></select>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ═══ MEMORY PANEL (overlay) ═══ -->
+  <div id="memory-panel" class="memory-panel hidden">
+    <div class="memory-panel-inner">
+      <div class="memory-panel-header">
+        <h3>Memory</h3>
+        <button id="memory-panel-close" class="titlebar-btn">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <div class="memory-section">
+        <div class="memory-section-header">
+          <span class="memory-section-title">Facts</span>
+          <button id="memory-add-fact" class="memory-small-btn">+ Add</button>
+        </div>
+        <div id="memory-facts-list" class="memory-list"></div>
+      </div>
+
+      <div class="memory-section">
+        <div class="memory-section-header">
+          <span class="memory-section-title">Conversation Summaries</span>
+        </div>
+        <div id="memory-summaries-list" class="memory-list"></div>
+      </div>
+
+      <div class="memory-panel-footer">
+        <button id="memory-clear-all" class="memory-danger-btn">Clear All Memory</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ QUIT MODAL ═══ -->
+  <div id="quit-modal" class="quit-modal-overlay hidden">
+    <div class="quit-modal-box">
+      <h3>⚠ Shut Down Zero</h3>
+      <p>Are you sure you want to permanently exit Zero?<br>All background processes will be terminated.</p>
+      <div class="quit-actions">
+        <button id="btn-quit-yes" class="quit-btn yes">Yes, shut it down</button>
+        <button id="btn-quit-no" class="quit-btn no">No, stay open</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

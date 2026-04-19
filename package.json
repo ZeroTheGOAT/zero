@@ -1,0 +1,16 @@
+{
+  "name": "zero",
+  "version": "1.0.0",
+  "description": "Zero — Floating AI Secretary for Windows. Fully local, fully free.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "set ZERO_DEV=1 && electron ."
+  },
+  "dependencies": {
+    "electron": "^35.0.0",
+    "marked": "^15.0.0"
+  },
+  "author": "Zero",
+  "license": "MIT"
+}
