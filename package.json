@@ -1,8 +1,8 @@
 {
   "name": "zero",
   "version": "1.0.0",
-  "description": "Zero — Floating AI Secretary for Windows. Fully local, fully free.",
-  "main": "main.js",
+  "description": "Zero — Local AI assistant overlay for Windows. Runs entirely on your machine using Ollama.",
+  "main": "src/main.js",
   "scripts": {
     "start": "electron .",
     "dev": "set ZERO_DEV=1 && electron ."

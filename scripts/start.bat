@@ -1,10 +1,10 @@
 @echo off
-:: ═══════════════════════════════════════════════
+:: ===============================================
 ::  ZERO — Launch Script
 ::  Run this to start Zero in the background
-:: ═══════════════════════════════════════════════
-title Zero AI Secretary
-cd /d "%~dp0"
+:: ===============================================
+title Zero
+cd /d "%~dp0.."
 
 :: Start Ollama if not running
 tasklist /FI "IMAGENAME eq ollama.exe" 2>NUL | find /I "ollama.exe" >NUL
