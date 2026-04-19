@@ -83,6 +83,7 @@ const el = {
   btnQuitYes: $('#btn-quit-yes'),
   btnQuitNo: $('#btn-quit-no'),
   tabFiles: $('#tab-files'),
+  filesBadge: $('#files-badge'),
   tabTerminal: $('#tab-terminal'),
   runningBadge: $('#running-badge'),
   actionPanel: $('#action-panel'),
@@ -259,6 +260,8 @@ function setupEventListeners() {
   window._trackCreatedFile = (path) => {
     if (!createdFiles.includes(path)) {
       createdFiles.push(path);
+      el.filesBadge.textContent = createdFiles.length;
+      el.filesBadge.classList.remove('hidden');
       if (activeTab === 'files') {
         renderFilesList();
       }
